@@ -2,12 +2,27 @@
 
 /* Colours live in one place as CSS variables, so changing the look later is a one-line edit. */
 :root {
+  color-scheme: light; /* also tells the browser to draw scrollbars etc. in light */
   --bg: #eef1f5;
   --surface: #ffffff;
   --text: #151a22;
   --muted: #5b6574;
   --line: #d9dee6;
+  --hover: #f6f8fb;
   --accent: #e10600; /* F1 red, used sparingly */
+}
+
+/* Dark mode = the same variable names with different values.
+   theme.js sets data-theme="dark" on <html>, which makes this block win. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #0f141b;
+  --surface: #171e28;
+  --text: #e8ecf2;
+  --muted: #9aa5b5;
+  --line: #2a3340;
+  --hover: #1e2733;
+  --accent: #ff3b30; /* a touch brighter so it still pops on dark */
 }
 
 * {
@@ -28,11 +43,40 @@ main {
   padding: 2rem 1rem 3rem;
 }
 
+/* Title on the left, theme button on the right. */
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
 h1 {
-  margin: 0 0 1.5rem;
+  margin: 0;
   font-size: 1.9rem;
   font-weight: 800;
   letter-spacing: -0.02em;
+}
+
+#theme-toggle {
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+#theme-toggle:hover {
+  border-color: var(--muted);
+}
+
+#theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 h2 {
@@ -205,7 +249,7 @@ tbody tr:first-child td:first-child {
 }
 
 tbody tr:hover {
-  background: #f6f8fb;
+  background: var(--hover);
 }
 
 /* The sprint column is hidden by default. results.js adds the "has-sprint" class
