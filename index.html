@@ -37,6 +37,9 @@
       <!-- Filled in by weather.js; only shows from the Monday of race week -->
       <div id="weather" class="weather" hidden></div>
 
+      <!-- Filled in by circuit.js: track outline and circuit stats for the next race -->
+      <div id="circuit" class="circuit" hidden></div>
+
       <!-- The two races after it -->
       <ul id="upcoming-races" class="upcoming" hidden></ul>
     </section>
@@ -111,6 +114,8 @@
   <!-- Plain script tags (not type="module") so this works when you just double-click index.html -->
   <script src="standings.js"></script>
   <script src="weather.js"></script>
+  <script src="circuit-data.js"></script>
+  <script src="circuit.js"></script>
   <script src="schedule.js"></script>
   <script src="results.js"></script>
   <script src="tabs.js"></script>
