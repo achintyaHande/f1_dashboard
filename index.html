@@ -10,7 +10,17 @@
   <main>
     <h1>F1 Dashboard</h1>
 
-    <section>
+    <!-- The tab bar. Each button points at one panel below via data-tab / aria-controls.
+         tabs.js shows the matching panel and hides the others. -->
+    <nav class="tabs" role="tablist" aria-label="Dashboard sections">
+      <button role="tab" data-tab="next" aria-controls="panel-next" aria-selected="true">Next race</button>
+      <button role="tab" data-tab="results" aria-controls="panel-results" aria-selected="false">Last race</button>
+      <button role="tab" data-tab="drivers" aria-controls="panel-drivers" aria-selected="false">Drivers</button>
+      <button role="tab" data-tab="constructors" aria-controls="panel-constructors" aria-selected="false">Constructors</button>
+    </nav>
+
+    <!-- ===== Panel 1: next races (the weather block will be added here later) ===== -->
+    <section id="panel-next" role="tabpanel">
       <h2>Next race</h2>
 
       <p id="schedule-status">Loading schedule…</p>
@@ -22,13 +32,37 @@
       <ul id="upcoming-races" class="upcoming" hidden></ul>
     </section>
 
-    <section>
+    <!-- ===== Panel 2: last race results ===== -->
+    <section id="panel-results" role="tabpanel" hidden>
+      <!-- results.js replaces this heading with the race name once data arrives -->
+      <h2 id="results-title">Last race result</h2>
+
+      <p id="results-status">Loading results…</p>
+
+      <div class="table-wrap">
+        <table id="results-table" hidden>
+          <thead>
+            <tr>
+              <th>Pos</th>
+              <th>Driver</th>
+              <th>Team</th>
+              <th>Time / status</th>
+              <th class="num">Points</th>
+              <!-- Hidden by CSS unless results.js finds a sprint for this weekend -->
+              <th class="num sprint-col">Sprint pts</th>
+            </tr>
+          </thead>
+          <tbody id="results-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== Panel 3: driver standings ===== -->
+    <section id="panel-drivers" role="tabpanel" hidden>
       <h2>Driver standings</h2>
 
-      <!-- Shows "Loading..." first, then an error message if the fetch fails -->
       <p id="standings-status">Loading standings…</p>
 
-      <!-- Hidden until the data arrives; standings.js fills the <tbody> with rows -->
       <div class="table-wrap">
         <table id="driver-table" hidden>
           <thead>
@@ -44,7 +78,8 @@
       </div>
     </section>
 
-    <section>
+    <!-- ===== Panel 4: constructor standings ===== -->
+    <section id="panel-constructors" role="tabpanel" hidden>
       <h2>Constructor standings</h2>
 
       <p id="constructor-status">Loading standings…</p>
@@ -64,8 +99,10 @@
     </section>
   </main>
 
-  <!-- Plain script tag (not type="module") so this works when you just double-click index.html -->
+  <!-- Plain script tags (not type="module") so this works when you just double-click index.html -->
   <script src="standings.js"></script>
   <script src="schedule.js"></script>
+  <script src="results.js"></script>
+  <script src="tabs.js"></script>
 </body>
 </html>

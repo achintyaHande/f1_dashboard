@@ -40,14 +40,51 @@ h2 {
   font-size: 1.15rem;
 }
 
-/* Space between stacked sections (drivers, then constructors, then whatever comes next). */
-section + section {
-  margin-top: 2.25rem;
+/* ---------- Tab bar ---------- */
+.tabs {
+  position: sticky; /* stays at the top of the window while you scroll */
+  top: 0;
+  z-index: 1;
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 1.5rem;
+  background: var(--bg);
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto; /* scrolls sideways on a narrow phone instead of wrapping */
+}
+
+.tabs button {
+  flex: none;
+  margin-bottom: -1px; /* lets the active underline sit on top of the bar's border */
+  padding: 0.7rem 1rem;
+  border: 0;
+  border-bottom: 3px solid transparent;
+  background: none;
+  font: inherit;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.tabs button:hover {
+  color: var(--text);
+}
+
+/* tabs.js sets aria-selected="true" on the active button; CSS reads it here. */
+.tabs button[aria-selected="true"] {
+  color: var(--text);
+  border-bottom-color: var(--text);
+}
+
+.tabs button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
 }
 
 #standings-status,
 #constructor-status,
-#schedule-status {
+#schedule-status,
+#results-status {
   color: var(--muted);
 }
 
@@ -143,4 +180,15 @@ tbody tr:first-child td:first-child {
 
 tbody tr:hover {
   background: #f6f8fb;
+}
+
+/* The sprint column is hidden by default. results.js adds the "has-sprint" class
+   to the table on sprint weekends, which switches it back on.
+   ("has-sprint .sprint-col" is more specific than ".sprint-col", so it wins.) */
+.sprint-col {
+  display: none;
+}
+
+.has-sprint .sprint-col {
+  display: table-cell;
 }
