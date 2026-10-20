@@ -11,6 +11,18 @@
     <h1>F1 Dashboard</h1>
 
     <section>
+      <h2>Next race</h2>
+
+      <p id="schedule-status">Loading schedule…</p>
+
+      <!-- The big card for the very next race -->
+      <div id="next-race" class="race-card" hidden></div>
+
+      <!-- The two races after it -->
+      <ul id="upcoming-races" class="upcoming" hidden></ul>
+    </section>
+
+    <section>
       <h2>Driver standings</h2>
 
       <!-- Shows "Loading..." first, then an error message if the fetch fails -->
@@ -54,5 +66,6 @@
 
   <!-- Plain script tag (not type="module") so this works when you just double-click index.html -->
   <script src="standings.js"></script>
+  <script src="schedule.js"></script>
 </body>
 </html>

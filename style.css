@@ -46,8 +46,56 @@ section + section {
 }
 
 #standings-status,
-#constructor-status {
+#constructor-status,
+#schedule-status {
   color: var(--muted);
+}
+
+/* ---------- Next race card ---------- */
+.race-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 1.25rem 1.25rem 1.1rem;
+}
+
+.race-card h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.5rem;
+  letter-spacing: -0.01em;
+}
+
+.race-where {
+  margin: 0;
+  color: var(--muted);
+}
+
+/* The date/time is the thing you came for, so it's the biggest text after the title. */
+.race-when {
+  margin: 0.9rem 0 0;
+  font-size: 1.2rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.upcoming {
+  list-style: none;
+  margin: 0.75rem 0 0;
+  padding: 0;
+}
+
+.upcoming li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.55rem 0.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.race-time {
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
 /* Lets the table scroll sideways on a narrow phone instead of breaking the page. */
