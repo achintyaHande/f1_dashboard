@@ -5,6 +5,22 @@
 // One request gives us every round of the season. We filter it ourselves.
 const SCHEDULE_URL = "https://api.jolpi.ca/ergast/f1/current.json";
 
+// Every time on this page is shown in IST, whatever timezone the device is set to.
+const DISPLAY_TIME_ZONE = "Asia/Kolkata";
+
+// The sessions we look for on each race in the API data (key = field name in the JSON).
+// A normal weekend has Practice 1-3 and Qualifying. A sprint weekend has Practice 1,
+// Sprint Qualifying, Sprint and Qualifying instead. We don't need to know which kind
+// of weekend it is: we just keep whichever of these fields the race actually has.
+const SESSION_FIELDS = [
+  { key: "FirstPractice", label: "Practice 1" },
+  { key: "SecondPractice", label: "Practice 2" },
+  { key: "ThirdPractice", label: "Practice 3" },
+  { key: "SprintQualifying", label: "Sprint Qualifying" },
+  { key: "Sprint", label: "Sprint" },
+  { key: "Qualifying", label: "Qualifying" },
+];
+
 async function loadSchedule() {
   const status = document.getElementById("schedule-status");
   const card = document.getElementById("next-race");
@@ -39,11 +55,26 @@ async function loadSchedule() {
 
     // First upcoming race gets the big card.
     const next = upcoming[0];
+
+    // Only the next race gets the full weekend schedule (the list below it doesn't).
+    // Sessions that have already happened this week get a "past" class so the CSS can fade them.
+    const sessionRows = getWeekendSessions(next.race)
+      .map(
+        (session) => `
+        <li class="${session.start < now ? "past" : ""}">
+          <span>${session.label}</span>
+          <span class="race-time">${formatSessionTime(session.start)}</span>
+        </li>`
+      )
+      .join("");
+
     card.innerHTML = `
       <h3>${next.race.raceName}</h3>
       <p class="race-where">${next.race.Circuit.circuitName}</p>
       <p class="race-where">${next.race.Circuit.Location.locality}, ${next.race.Circuit.Location.country}</p>
-      <p class="race-when">${formatRaceTime(next.start)}</p>`;
+      <p class="race-when">${formatRaceTime(next.start)}</p>
+      <h4>Weekend schedule (IST)</h4>
+      <ul class="sessions">${sessionRows}</ul>`;
 
     // The remaining ones (index 1 onward) become simple list rows.
     list.innerHTML = upcoming
@@ -80,8 +111,9 @@ function getRaceStart(race) {
   return new Date(`${race.date}T${time}`);
 }
 
-// Turns a Date into readable text in YOUR timezone (the browser's), because
-// passing undefined as the first argument means "use this device's settings".
+// Turns a Date into readable text in IST. Passing undefined as the first argument
+// means "use this device's language and date style"; the timeZone option is what
+// forces IST regardless of the device's timezone.
 function formatRaceTime(date) {
   return date.toLocaleString(undefined, {
     weekday: "short",
@@ -90,7 +122,40 @@ function formatRaceTime(date) {
     hour: "2-digit",
     minute: "2-digit",
     timeZoneName: "short",
+    timeZone: DISPLAY_TIME_ZONE,
   });
+}
+
+// Same as above without the timezone name, because the session list already says
+// "(IST)" once in its heading and repeating it on every row would be clutter.
+function formatSessionTime(date) {
+  return date.toLocaleString(undefined, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: DISPLAY_TIME_ZONE,
+  });
+}
+
+// Collects every session of a race weekend into one list, earliest first.
+// In the API each session is a small object with its own date and time,
+// e.g. race.FirstPractice = { date: "2026-10-23", time: "17:30:00Z" }.
+// That's the same shape as the race's own date/time, so getRaceStart() works on them too.
+function getWeekendSessions(race) {
+  const sessions = SESSION_FIELDS
+    .filter((field) => race[field.key]) // keep only the sessions this race has
+    .map((field) => ({
+      label: field.label,
+      start: getRaceStart(race[field.key]),
+    }));
+
+  // The race itself isn't in a separate field, so add it by hand.
+  sessions.push({ label: "Race", start: getRaceStart(race) });
+
+  // Subtracting two Dates gives milliseconds, so this sorts earliest to latest.
+  return sessions.sort((a, b) => a.start - b.start);
 }
 
 loadSchedule();
