@@ -40,7 +40,13 @@ h2 {
   font-size: 1.15rem;
 }
 
-#standings-status {
+/* Space between stacked sections (drivers, then constructors, then whatever comes next). */
+section + section {
+  margin-top: 2.25rem;
+}
+
+#standings-status,
+#constructor-status {
   color: var(--muted);
 }
 

@@ -69,5 +69,55 @@ function renderDriverRow(entry) {
     </tr>`;
 }
 
+// ---------- Constructor standings ----------
+// Same pattern as the drivers: fetch -> check -> JSON -> dig down -> render rows.
+// Only the URL and the shape of the data differ.
+
+const CONSTRUCTOR_STANDINGS_URL =
+  "https://api.jolpi.ca/ergast/f1/current/constructorstandings.json";
+
+async function loadConstructorStandings() {
+  const status = document.getElementById("constructor-status");
+  const table = document.getElementById("constructor-table");
+  const rows = document.getElementById("constructor-rows");
+
+  try {
+    const response = await fetch(CONSTRUCTOR_STANDINGS_URL);
+    if (!response.ok) {
+      throw new Error("Server replied " + response.status);
+    }
+
+    const data = await response.json();
+
+    // Shape: MRData -> StandingsTable -> StandingsLists[0] -> ConstructorStandings
+    const list = data.MRData.StandingsTable.StandingsLists[0];
+
+    if (!list) {
+      status.textContent = "No standings published yet for this season.";
+      return;
+    }
+
+    rows.innerHTML = list.ConstructorStandings.map(renderConstructorRow).join("");
+    status.hidden = true;
+    table.hidden = false;
+  } catch (error) {
+    status.textContent =
+      "Couldn't load standings. Check your connection and refresh. (" +
+      error.message +
+      ")";
+  }
+}
+
+function renderConstructorRow(entry) {
+  return `
+    <tr>
+      <td>${entry.position}</td>
+      <td><strong>${entry.Constructor.name}</strong></td>
+      <td class="num">${entry.points}</td>
+    </tr>`;
+}
+
 // Kick everything off when the script loads.
+// Both run at the same time; neither waits for the other.
 loadDriverStandings();
+loadConstructorStandings();
