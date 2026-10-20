@@ -60,6 +60,10 @@ async function loadSchedule() {
     status.hidden = true;
     card.hidden = false;
     list.hidden = false;
+
+    // Hand the next race to weather.js (loaded before this file). We don't wait for it:
+    // the weather fills in on its own, and a weather problem can't break the schedule.
+    loadWeather(next.race, next.start);
   } catch (error) {
     status.textContent =
       "Couldn't load the schedule. Check your connection and refresh. (" +
